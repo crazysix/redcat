@@ -1,3 +1,3 @@
 # RedCat
 
-RedCat System coding challenge.
+RedCat Systems coding challenge.
