@@ -17,6 +17,7 @@ class RequestRouter extends Route {
     $this->add('/upload', [$this, 'buildUpload']);
     $this->add('/upload', [$this, 'buildUpload'], 'post');
     $this->add('/data/([a-z]+)/view', [$this, 'buildDataView']);
+    $this->add('/data/([a-z]+)/view', [$this, 'buildDataView'], 'post');
   }
 
   /**
