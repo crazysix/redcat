@@ -88,6 +88,7 @@ class PageBuilder {
       '<%scripts%>' => $this->buildJS(),
       '<%styles%>' => $this->buildCSS(),
       '<%menu%>' => $this->buildMenu(),
+      '<%errors%>' => $this->buildErrors(),
     ];
 
     $header = str_replace(array_keys($header_vars), $header_vars, $header);
@@ -190,6 +191,28 @@ class PageBuilder {
    */
   public function addMenuItems(array $items) {
     array_push($this->menu, $items);
+  }
+
+  /**
+   * Build error output.
+   *
+   * @return string
+   *   Menu list items.
+   */
+  public function buildErrors() {
+    $error_block = '';
+    if (!empty($GLOBALS['redcat_app_errors'])) {
+      foreach ($GLOBALS['redcat_app_errors'] as $error) {
+        if (!empty($error_block)) {
+          $error_block .= PHP_EOL;
+        }
+        $error_block .= $error;
+      }
+
+      $error_block = '<div class="error">' . nl2br($error_block) . '</div>';
+    }
+
+    return $error_block;
   }
 
 }

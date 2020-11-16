@@ -67,6 +67,8 @@ class Route {
             array_shift($matches);
           }
 
+          array_unshift($matches, $method);
+
           call_user_func_array($route['function'], $matches);
 
           $route_match = TRUE;

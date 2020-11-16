@@ -67,7 +67,7 @@ class FileOptions {
       $build['content'] .= '<li><a href="/upload">Upload new data from a new CSV</a>';
       $build['content'] .= ' (doing this will delete your previously uploaded data).</li>';
       $build['content'] .= '<li><a href="/data/original/view">Work with your previously uploaded data</a>';
-      if ($this->fileManager->originalFileExists()) {
+      if ($this->fileManager->alteredFileExists()) {
         $build['menu'][] = [
           'link' => '/data/altered/view',
           'title' => 'View Altered Data',
