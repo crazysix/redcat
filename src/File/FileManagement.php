@@ -44,16 +44,7 @@ class FileManagement {
    *   Array of CSV contents.
    */
   public function csvToArray(string $csv) {
-    $csv_array = [];
-    if (($file = fopen(BASE_PATH . '/files/' . $csv . '.csv', 'r')) !== FALSE) {
-      while (($data = fgetcsv($file, 1000, ',')) !== FALSE) {
-        $csv_array[] = $data;
-      }
-      fclose($file);
-    }
-    else {
-      $GLOBALS['redcat_app_errors'][] = 'The application failed to read ' . BASE_PATH . '/files/' . $csv . '.csv.';
-    }
+    $csv_array = array_map('str_getcsv', file(BASE_PATH . '/files/' . $csv . '.csv'));
 
     return $csv_array;
   }
