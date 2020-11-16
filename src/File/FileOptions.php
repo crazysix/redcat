@@ -52,8 +52,9 @@ class FileOptions {
    *   The build array used for page construction.
    */
   public function buildContent() {
+    $build['content'] = '';
     if (!$this->fileManager->originalFileExists()) {
-      $build['content'] = '<p>Welcome to the RedCat Systems coding challenge.</p>';
+      $build['content'] .= '<p>Welcome to the RedCat Systems coding challenge.</p>';
       $build['content'] .= '</p>Please <a href="/upload">upload a CSV</a> to begin.</p>';
     }
     else {

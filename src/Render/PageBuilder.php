@@ -190,7 +190,7 @@ class PageBuilder {
    *   Menu items to be added to the menu.
    */
   public function addMenuItems(array $items) {
-    array_push($this->menu, $items);
+    $this->menu = array_merge($this->menu, $items);
   }
 
   /**
