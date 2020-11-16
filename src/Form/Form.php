@@ -35,74 +35,77 @@ class Form {
    */
   public function renderForm() {
     $form_id = $this->getFormId();
+    $form = $this->buildform();
 
     $form_output = '<form method="post" action="' . $_SERVER['REQUEST_URI'] . '" ';
-    $form_output .= 'name="' . $form_id . '" id="' . $form_id . '" >';
+    $form_output .= 'name="' . $form_id . '" id="' . $form_id . '"';
+    $form_output .= (!empty($form['#file_upload']) ? ' enctype="multipart/form-data"' : '') . '>';
     
     // Render form elements.
-    $form = $this->buildform();
     foreach ($form as $name => $element) {
-      if (!isset($element['#type']) || $element['#type'] == 'markup') {
-        $form_output .= '<div name="' . $name . '">' . ($element['#markup'] ?? '') . '</div>';
-      }
-      elseif ($element['#type'] == 'textfield') {
-        $size = $element['#size'] ?? 60;
-        $maxlength = $element['#maxlength'] ?? 128;
-        $form_output .= '<div class="field-' . $element['#type'] . '">';
-        $form_output .= '<label>' . ($element['#title'] ?? '') . '</label>';
-        $form_output .= '<input name="' . $name . '" type="text" ';
-        $form_output .= 'size="' . $size . '" maxlength="' . $maxlength . '" ';
-        $form_output .= 'value="' . ($element['#default_value'] ?? '') . '" ';
-        $form_output .= 'id="edit-' . str_replace([' ', '_'], '-', $name) . '" />';
-        if (!empty($element['#description'])) {
-          $form_output .= '<div class="description">' . $element['#description'] . '</div>';
+      if (substr($name, 0, 1) != '#') {
+        if (!isset($element['#type']) || $element['#type'] == 'markup') {
+          $form_output .= '<div name="' . $name . '">' . ($element['#markup'] ?? '') . '</div>';
         }
-        $form_output .= '</div>';
-      }
-      elseif ($element['#type'] == 'textarea') {
-        $rows = $element['#rows'] ?? 5;
-        $cols = $element['#cols'] ?? 60;
-        $form_output .= '<div class="field-' . $element['#type'] . '">';
-        $form_output .= '<label>' . ($element['#title'] ?? '') . '</label>';
-        $form_output .= '<textarea name="' . $name . '" ';
-        $form_output .= 'rows="' . $rows . '" cols="' . $cols . '" ';
-        $form_output .= 'id="edit-' . str_replace([' ', '_'], '-', $name) . '">';
-        $form_output .= $element['#default_value'] ?? '';
-        $form_output .= '</textarea>';
-        if (!empty($element['#description'])) {
-          $form_output .= '<div class="description">' . $element['#description'] . '</div>';
+        elseif ($element['#type'] == 'textfield') {
+          $size = $element['#size'] ?? 60;
+          $maxlength = $element['#maxlength'] ?? 128;
+          $form_output .= '<div class="field-' . $element['#type'] . '">';
+          $form_output .= '<label>' . ($element['#title'] ?? '') . '</label>';
+          $form_output .= '<input name="' . $name . '" type="text" ';
+          $form_output .= 'size="' . $size . '" maxlength="' . $maxlength . '" ';
+          $form_output .= 'value="' . ($element['#default_value'] ?? '') . '" ';
+          $form_output .= 'id="edit-' . str_replace([' ', '_'], '-', $name) . '" />';
+          if (!empty($element['#description'])) {
+            $form_output .= '<div class="description">' . $element['#description'] . '</div>';
+          }
+          $form_output .= '</div>';
         }
-        $form_output .= '</div>';
-      }
-      elseif ($element['#type'] == 'checkbox') {
-        $form_output .= '<div class="field-' . $element['#type'] . '">';
-        $form_output .= '<input name="' . $name . '" type="checkbox" ';
-        $form_output .= 'value="1" ' . (!empty($element['#default_value']) ? 'checked="checked" ': '');
-        $form_output .= 'id="edit-' . str_replace([' ', '_'], '-', $name) . '" />';
-        $form_output .= '<label>' . ($element['#title'] ?? '') . '</label>';
-        if (!empty($element['#description'])) {
-          $form_output .= '<div class="description">' . $element['#description'] . '</div>';
+        elseif ($element['#type'] == 'textarea') {
+          $rows = $element['#rows'] ?? 5;
+          $cols = $element['#cols'] ?? 60;
+          $form_output .= '<div class="field-' . $element['#type'] . '">';
+          $form_output .= '<label>' . ($element['#title'] ?? '') . '</label>';
+          $form_output .= '<textarea name="' . $name . '" ';
+          $form_output .= 'rows="' . $rows . '" cols="' . $cols . '" ';
+          $form_output .= 'id="edit-' . str_replace([' ', '_'], '-', $name) . '">';
+          $form_output .= $element['#default_value'] ?? '';
+          $form_output .= '</textarea>';
+          if (!empty($element['#description'])) {
+            $form_output .= '<div class="description">' . $element['#description'] . '</div>';
+          }
+          $form_output .= '</div>';
         }
-        $form_output .= '</div>';
-      }
-      elseif ($element['#type'] == 'file') {
-        $accept = $element['#extensions'] ?? '.csv';
-        $form_output .= '<div class="field-' . $element['#type'] . '">';
-        $form_output .= '<label>' . ($element['#title'] ?? '') . '</label>';
-        $form_output .= '<input name="' . $name . '" type="file" ';
-        $form_output .= 'accept="' . $accept . '" ';
-        $form_output .= 'id="edit-' . str_replace([' ', '_'], '-', $name) . '" />';
-        if (!empty($element['#description'])) {
-          $form_output .= '<div class="description">' . $element['#description'] . '</div>';
+        elseif ($element['#type'] == 'checkbox') {
+          $form_output .= '<div class="field-' . $element['#type'] . '">';
+          $form_output .= '<input name="' . $name . '" type="checkbox" ';
+          $form_output .= 'value="1" ' . (!empty($element['#default_value']) ? 'checked="checked" ': '');
+          $form_output .= 'id="edit-' . str_replace([' ', '_'], '-', $name) . '" />';
+          $form_output .= '<label>' . ($element['#title'] ?? '') . '</label>';
+          if (!empty($element['#description'])) {
+            $form_output .= '<div class="description">' . $element['#description'] . '</div>';
+          }
+          $form_output .= '</div>';
         }
-        $form_output .= '</div>';
-      }
-      elseif ($element['#type'] == 'submit') {
-        $form_output .= '<div class="field-' . $element['#type'] . '">';
-        $form_output .= '<input name="' . $name . '" type="submit" class="form-actions" ';
-        $form_output .= 'value="' . ($element['#title'] ?? 'Submit') . '" ';
-        $form_output .= 'id="edit-' . str_replace([' ', '_'], '-', $name) . '" />';
-        $form_output .= '</div>';
+        elseif ($element['#type'] == 'file') {
+          $accept = $element['#extensions'] ?? '.csv';
+          $form_output .= '<div class="field-' . $element['#type'] . '">';
+          $form_output .= '<label>' . ($element['#title'] ?? '') . '</label>';
+          $form_output .= '<input name="' . $name . '" type="file" ';
+          $form_output .= 'accept="' . $accept . '" ';
+          $form_output .= 'id="edit-' . str_replace([' ', '_'], '-', $name) . '" />';
+          if (!empty($element['#description'])) {
+            $form_output .= '<div class="description">' . $element['#description'] . '</div>';
+          }
+          $form_output .= '</div>';
+        }
+        elseif ($element['#type'] == 'submit') {
+          $form_output .= '<div class="field-' . $element['#type'] . '">';
+          $form_output .= '<input name="' . $name . '" type="submit" class="form-actions" ';
+          $form_output .= 'value="' . ($element['#title'] ?? 'Submit') . '" ';
+          $form_output .= 'id="edit-' . str_replace([' ', '_'], '-', $name) . '" />';
+          $form_output .= '</div>';
+        }
       }
     }
 

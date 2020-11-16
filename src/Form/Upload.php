@@ -57,6 +57,8 @@ class Upload extends Form {
       ];
     }
 
+    $form['#file_upload'] = TRUE;
+
     $form['headers'] = [
       '#type' => 'checkbox',
       '#title' => 'CSV has column headers',
@@ -105,7 +107,42 @@ class Upload extends Form {
    */
   public function submit() {
     $values = $this->getValues();
-    var_dump($values);
+
+    $error = FALSE;
+
+    if (!empty($_FILES["data_file"]["name"])) {
+      $ext = pathinfo($_FILES['data_file']['name'], PATHINFO_EXTENSION);
+      if ($ext = 'csv') {
+        $saved = move_uploaded_file($_FILES["data_file"]["tmp_name"], BASE_PATH . '/files/original.' . $ext);
+        if ($saved) {
+          if ($this->fileManager->alteredFileExists()) {
+            $this->fileManager->deleteAlteredFile();
+          }
+          if (empty($values['headers'])) {
+            $this->fileManager->addColumnHeaders();
+          }
+        }
+        else {
+          $GLOBALS['redcat_app_errors'][] = 'There was an error while saving your file. Please try again.';
+        $error = TRUE;
+        }
+      }
+      else {
+        $GLOBALS['redcat_app_errors'][] = 'The uploaded file was not a CSV.';
+        $error = TRUE;
+      }
+    }
+    else {
+      $GLOBALS['redcat_app_errors'][] = 'A problem occurred while uploading your file. Please try again.';
+        $error = TRUE;
+    }
+
+    if ($error) {
+      $this->render();
+    }
+    else {
+      header('Location: /data/original/view');
+    }
   }
 
 }
