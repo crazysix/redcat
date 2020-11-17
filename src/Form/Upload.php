@@ -51,7 +51,8 @@ class Upload extends Form {
         . '<a href="/data/original/view">previous file</a>.';
       if ($altered) {
         $message = 'Uploading a new data file will delete the '
-          . '<a href="/data/original/view">previous file</a> and the <a href="/data/saved/view">altered file</a>.';
+          . '<a href="/data/original/view">previous file</a> and '
+          . 'the <a href="/data/saved/view">altered file</a>.';
       }
       $form['warning'] = [
         '#type' => 'markup',
