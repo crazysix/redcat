@@ -2,20 +2,12 @@
 
 namespace CodeChallenge\Form;
 
-use CodeChallenge\File\FileManagement;
 use CodeChallenge\Form\Form;
 
 /**
  * AddColumn form for CSV.
  */
 class AddColumn extends Form {
-
-  /**
-   * The file manager class.
-   *
-   * @var \CodeChallenge\File\FileManagement
-   */
-  protected $fileManager;
 
   /**
    * The csv data.
@@ -30,13 +22,6 @@ class AddColumn extends Form {
    * @var bool
    */
   protected $error = FALSE;
-
-  /**
-   * Constructs the AddColumn object.
-   */
-  public function __construct() {
-    $this->fileManager = new FileManagement();
-  }
 
   /**
    * {@inheritdoc}
