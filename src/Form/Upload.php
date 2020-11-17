@@ -104,6 +104,8 @@ class Upload extends Form {
       }
     }
 
+    $build['title'] = 'Data Upload';
+
     $this->pageBuilder->buildPage($build);
   }
 

@@ -49,7 +49,7 @@ class AddColumn extends Form {
 
     $form['column_expression'] = [
       '#type' => 'textfield',
-      '#title' => 'Column Name',
+      '#title' => 'Expression',
       '#description' => 'Acceptable values include column name with no spaces, '
         . 'text with double quotes(""), concatenate (&), and arithimitic (+ - * /).',
       '#size' => 120,
@@ -92,7 +92,7 @@ class AddColumn extends Form {
     if (!$this->error) {
       $expression = $values['column_expression'];
       $process = $this->parseExpression($expression);
-      $data = $this->createData($process);
+      $data = $this->createData($process, $values['column_name']);
       if ($data) {
         $this->setData($data);
       }
@@ -138,9 +138,9 @@ class AddColumn extends Form {
     $process = [];
 
     preg_match_all('/"([^"]+)"/', $expression, $string_results);
-    if (!empty($results[0])) {
+    if (!empty($string_results[0])) {
       $expression_split = $expression;
-      foreach ($results[0] as $key => $string) {
+      foreach ($string_results[0] as $key => $string) {
         $parse = explode($string, $expression_split, 2);
         if (strlen(trim($parse[0])) > 0) {
           $pre_expression = trim($parse[0]);
@@ -161,7 +161,7 @@ class AddColumn extends Form {
         }
         $process[] = [
           'type' => 'quote',
-          'string' => $results[1][$key],
+          'string' => $string_results[1][$key],
         ];
         $expression_split = $parse[1] ?? '';
         $expression_split = trim($expression_split);
@@ -232,96 +232,120 @@ class AddColumn extends Form {
       // Calculate new data row.
       else {
         $new_value = '';
-        foreach ($$process as $actions) {
-          if ($actions['type'] == 'string') {
+        foreach ($process as $actions) {
+          if ($actions['type'] == 'quote') {
             $new_value .= $actions['string'];
           }
           elseif ($actions['type'] == 'expression') {
-            $expression_process = $actions['expression'];
-            // Find * and /.
-            $expression_process = $this->operatorProcessing(
-              $expression_process,
-              ['*', '/'],
-              $row,
-              $columns
-            );
-
-            // Find + and -.
-            $expression_process = $this->operatorProcessing(
-              $expression_process,
-              ['+', '-'],
-              $row,
-              $columns
-            );
-
-            // Find &.
-            $c_key = $this->operatorKey($expression_process, ['&']);
-            $all_ops = ['*', '/', '+', '-', '&'];
-            while ($c_key !== FALSE) {
-              $new_expression_process = [];
-              if (
-                isset($expression_process[$c_key - 1])
-                && isset($expression_process[$c_key + 1])
-              ) {
-                $val_1 = trim($expression_process[$c_key - 1]);
-                $val_2 = trim($expression_process[$c_key + 1]);
-                $val = '';
-                if ($val_1 == 'NA' || $val_2 == 'NA') {
-                  $val = 'NA';
-                }
-                elseif(in_array($val_1, $all_ops) || in_array($val_2, $all_ops)) {
+            if (count($actions['expression']) == 1) {
+              $val = $actions['expression'][0];
+              if (!is_numeric($val)) {
+                $row_key = array_search($val, $columns);
+                if ($row_key === FALSE) {
                   $this->setError(TRUE);
-                  $error_string = $expression_process[$c_key - 1];
-                  $error_string .= $expression_process[$c_key];
-                  $error_string .= $expression_process[$c_key + 1];
                   $GLOBALS['redcat_app_errors'][] = 'The expression had an error around "'
-                    . $error_string . '".';
+                    . $val . '".';
                   return FALSE;
                 }
                 else {
-                  $row_key = array_search($val_1, $columns);
-                  if ($row_key !== FALSE) {
-                    $val_1 = $row[$row_key];
-                  }
-                  $row_key = array_search($val_2, $columns);
-                  if ($row_key !== FALSE) {
-                    $val_2 = $row[$row_key];
-                  }
-                  $val = $val_1 . $val_2;
-                }
-                // Construct new array.
-                if ($c_key > 1) {
-                  $new_expression_process = array_slice($expression_process, 0, $mkey - 1);
-                }
-                $new_expression_process[] = $val;
-                if ($c_key < count($expression_process) - 2) {
-                  $end_num = count($expression_process) - $c_key - 2;
-                  $new_expression_process = array_merge(
-                    $new_expression_process,
-                    array_slice($expression_process, -1, $end_num)
-                  );
+                  $val = $row[$row_key];
                 }
               }
-              else {
-                $this->setError(TRUE);
-                $GLOBALS['redcat_app_errors'][] = 'There was a problem with one of the concat'
-                  . ' operations (&). Please review your expression.';
+              $new_value .= $val;
+            }
+            else {
+              $expression_process = $actions['expression'];
+              // Find * and /.
+              $expression_process = $this->operatorProcessing(
+                $expression_process,
+                ['*', '/'],
+                $row,
+                $columns
+              );
+              if ($expression_process === FALSE) {
                 return FALSE;
               }
 
-              $expression_process = $new_expression_process;
-              $c_key = $this->operatorKey($expression_process, $operators);
-            }
-            // There should only be one value left.
-            if (count($expression_process) == 1) {
-              $new_value .= $expression_process[0];
-            }
-            else {
-              // Something broke.
-              $this->setError(TRUE);
-              $GLOBALS['redcat_app_errors'][] = 'Something went wrong. '
-                . 'Please review your expression.';
-              return FALSE;
+              // Find + and -.
+              $expression_process = $this->operatorProcessing(
+                $expression_process,
+                ['+', '-'],
+                $row,
+                $columns
+              );
+              if ($expression_process === FALSE) {
+                return FALSE;
+              }
+
+              // Find &.
+              $c_key = $this->operatorKey($expression_process, ['&']);
+              $all_ops = ['*', '/', '+', '-', '&'];
+              while ($c_key !== FALSE) {
+                $new_expression_process = [];
+                if (
+                  isset($expression_process[$c_key - 1])
+                  && isset($expression_process[$c_key + 1])
+                ) {
+                  $val_1 = trim($expression_process[$c_key - 1]);
+                  $val_2 = trim($expression_process[$c_key + 1]);
+                  $val = '';
+                  if ($val_1 == 'NA' || $val_2 == 'NA') {
+                    $val = 'NA';
+                  }
+                  elseif(in_array($val_1, $all_ops) || in_array($val_2, $all_ops)) {
+                    $this->setError(TRUE);
+                    $error_string = $expression_process[$c_key - 1];
+                    $error_string .= $expression_process[$c_key];
+                    $error_string .= $expression_process[$c_key + 1];
+                    $GLOBALS['redcat_app_errors'][] = 'The expression had an error around "'
+                      . $error_string . '".';
+                    return FALSE;
+                  }
+                  else {
+                    $row_key = array_search($val_1, $columns);
+                    if ($row_key !== FALSE) {
+                      $val_1 = $row[$row_key];
+                    }
+                    $row_key = array_search($val_2, $columns);
+                    if ($row_key !== FALSE) {
+                      $val_2 = $row[$row_key];
+                    }
+                    $val = $val_1 . $val_2;
+                  }
+                  // Construct new array.
+                  if ($c_key > 1) {
+                    $new_expression_process = array_slice($expression_process, 0, $c_key - 1);
+                  }
+                  $new_expression_process[] = $val;
+                  if ($c_key < count($expression_process) - 2) {
+                    $end_num = count($expression_process) - $c_key - 2;
+                    $new_expression_process = array_merge(
+                      $new_expression_process,
+                      array_slice($expression_process, -1, $end_num)
+                    );
+                  }
+                }
+                else {
+                  $this->setError(TRUE);
+                  $GLOBALS['redcat_app_errors'][] = 'There was a problem with one of the concat'
+                    . ' operations (&). Please review your expression.';
+                  return FALSE;
+                }
+
+                $expression_process = $new_expression_process;
+                $c_key = $this->operatorKey($expression_process, ['&']);
+              }
+              // There should only be one value left.
+              if (count($expression_process) == 1) {
+                $new_value .= $expression_process[0];
+              }
+              else {
+                // Something broke.
+                $this->setError(TRUE);
+                $GLOBALS['redcat_app_errors'][] = 'Something went wrong. '
+                  . 'Please review your expression.';
+                return FALSE;
+              }
             }
           }
         }
@@ -340,7 +364,7 @@ class AddColumn extends Form {
   public function getHeaders() {
     $columns = $this->data[0];
     $headers = [];
-    foreach ($$columns as $header) {
+    foreach ($columns as $header) {
       $headers[] = trim($header);
     }
 
@@ -466,7 +490,7 @@ class AddColumn extends Form {
         }
         // Construct new array.
         if ($m_key > 1) {
-          $new_expression_process = array_slice($expression_process, 0, $mkey - 1);
+          $new_expression_process = array_slice($expression_process, 0, $m_key - 1);
         }
         $new_expression_process[] = $val;
         if ($m_key < count($expression_process) - 2) {

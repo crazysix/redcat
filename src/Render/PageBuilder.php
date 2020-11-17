@@ -10,6 +10,7 @@ class PageBuilder {
    * @var array
    */
   public $js = [
+    '/js/jquery.min.js',
     '/js/app.js',
   ];
 

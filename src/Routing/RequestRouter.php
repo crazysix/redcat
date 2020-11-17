@@ -55,7 +55,7 @@ class RequestRouter extends Route {
   public function buildDataView($method, $data) {
     $page = new \CodeChallenge\File\DataDisplay($data);
     if ($method == 'post') {
-      $page->build();
+      $page->post();
     }
     else {
       $page->build();
