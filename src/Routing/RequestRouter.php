@@ -5,7 +5,7 @@ namespace CodeChallenge\Routing;
 use CodeChallenge\Routing\Route;
 
 /**
- * Router Request class.
+ * Manage requests.
  */
 class RequestRouter extends Route {
 

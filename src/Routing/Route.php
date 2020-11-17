@@ -3,7 +3,7 @@
 namespace CodeChallenge\Routing;
 
 /**
- * Router class.
+ * Router base for managing requests.
  */
 class Route {
 
