@@ -69,9 +69,27 @@ class AddColumn extends Form {
    * {@inheritdoc}
    */
   public function validate(array $values = []) {
-    // Check for even number of quotes.
+    if (empty($values['column_expression']) || empty($values['column_name'])) {
+      $this->setError(TRUE);
+      $GLOBALS['redcat_app_errors'][] = 'The column name and expression are required.';
+      return FALSE;
+    }
 
-    // Check cahracters. No '|'.
+    // Check for even number of quotes.
+    $quote_num = substr_count($values['column_expression'], '"');
+    if (!($quote_num % 2 == 0)) {
+      $this->setError(TRUE);
+      $GLOBALS['redcat_app_errors'][] = 'The expression has an open quote.';
+      return FALSE;
+    }
+
+    // Validate column name.
+    if (preg_match('/^[a-zA-Z0-9_-]+$/', $values['column_name']) == 0) {
+      $this->setError(TRUE);
+      $GLOBALS['redcat_app_errors'][] = 'The column name has illegal characters. '
+        . 'Please only use alpha, numeric, underscore (_), and dashes(-).';
+      return FALSE;
+    }
 
     return TRUE;
   }
@@ -117,7 +135,9 @@ class AddColumn extends Form {
     // Remove no-break space coming from csv.
     if (!empty($this->data[0])) {
       foreach ($this->data[0] as $key => $value) {
-        $this->data[0][$key] = trim(urldecode(str_replace('%EF%BB%BF', '', urlencode($value))));
+        $this->data[0][$key] = trim(
+          urldecode(str_replace('%EF%BB%BF', '', urlencode($value)))
+        );
       }
     }
   }
