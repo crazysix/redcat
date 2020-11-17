@@ -1,0 +1,44 @@
+/*
+ * App styles.
+ */
+#container {
+  margin: 10px;
+}
+#primary-menu {
+  float: right;
+  width: 25%;
+  min-width: 500px;
+}
+#primary-menu ul {
+  list-style: none;
+  padding: 0px;
+  margin: 0px
+}
+#primary-menu ul li {
+  width: auto;
+  float: left;
+}
+#primary-menu ul li a {
+  padding: 0px 16px 5px 10px;
+}
+div.error {
+  border: solid red 1px;
+  padding: 10px;
+  color: red;
+}
+form label {
+  display: block;
+  padding-bottom: 5px: 
+}
+form .field-checkbox label {
+  display: inline;
+}
+.field-textarea, .field-textfield, .field-checkbox, .field-file {
+  padding: 10px;
+}
+.description {
+  font-size: small;
+}
+#redcat-csv-add-column {
+  padding-bottom: 15px;
+}
