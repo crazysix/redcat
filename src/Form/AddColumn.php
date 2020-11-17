@@ -117,7 +117,7 @@ class AddColumn extends Form {
     // Remove no-break space coming from csv.
     if (!empty($this->data[0])) {
       foreach ($this->data[0] as $key => $value) {
-        $this->data[0][$key] = trim(str_replace('%EF%BB%BF', '', urlencode($value)));
+        $this->data[0][$key] = trim(urldecode(str_replace('%EF%BB%BF', '', urlencode($value))));
       }
     }
   }
