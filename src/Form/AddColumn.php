@@ -92,6 +92,9 @@ class AddColumn extends Form {
     if (!$this->error) {
       $expression = $values['column_expression'];
       $process = $this->parseExpression($expression);
+      if ($process === FALSE) {
+        return FALSE;
+      }
       $data = $this->createData($process, $values['column_name']);
       if ($data) {
         $this->setData($data);
@@ -111,6 +114,12 @@ class AddColumn extends Form {
    */
   public function setData(array $data = []) {
     $this->data = $data;
+    // Remove no-break space coming from csv.
+    if (!empty($this->data[0])) {
+      foreach ($this->data[0] as $key => $value) {
+        $this->data[0][$key] = trim(str_replace('%EF%BB%BF', '', urlencode($value)));
+      }
+    }
   }
 
   /**
