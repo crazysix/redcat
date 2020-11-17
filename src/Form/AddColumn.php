@@ -125,6 +125,25 @@ class AddColumn extends Form {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getValues(string $key = '') {
+    // Fix quote formatting issue.
+    if (isset($_POST['column_expression'])) {
+      $_POST['column_expression'] = str_replace(
+        ['”', '“'],
+        '"',
+        $_POST['column_expression']
+      );
+    }
+    if (!empty($key)) {
+      return $_POST[$key] ?? NULL;
+    }
+
+    return $_POST ?? [];
+  }
+
+  /**
    * Set CSV data.
    *
    * @param array $data
@@ -177,6 +196,9 @@ class AddColumn extends Form {
           if (substr($pre_expression, -1) == '&') {
             $pre_expression = rtrim($pre_expression, '&');
           }
+          elseif (empty(trim($pre_expression))) {
+            $pre_expression = '';
+          }
           else {
             $this->setError(TRUE);
             $GLOBALS['redcat_app_errors'][] = 'A string in the submitted expression '
@@ -197,6 +219,9 @@ class AddColumn extends Form {
         // Only allow concat after quotes.
         if (substr($expression_split, 0, 1) == '&') {
           $expression_split = ltrim($expression_split, '&');
+        }
+        elseif (empty(trim($expression_split))) {
+          $expression_split = '';
         }
         else {
           $this->setError(TRUE);
