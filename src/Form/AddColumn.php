@@ -57,14 +57,16 @@ class AddColumn extends Form {
     $form['column_name'] = [
       '#type' => 'textfield',
       '#title' => 'Column Name',
-      '#description' => 'Column headers must have alphabetical characters. Dashes (-), and underscores (_), and numeric characters are okay.',
+      '#description' => 'Column headers must have alphabetical characters. '
+        . 'Dashes (-), and underscores (_), and numeric characters are okay.',
       '#default_value' => $column,
     ];
 
     $form['column_expression'] = [
       '#type' => 'textfield',
       '#title' => 'Column Name',
-      '#description' => 'Acceptable values include column name with no spaces, text with double quotes(""), concatenate (&), and arithimitic (+ - * /).',
+      '#description' => 'Acceptable values include column name with no spaces, '
+        . 'text with double quotes(""), concatenate (&), and arithimitic (+ - * /).',
       '#size' => 120,
       '#maxlength' => 512,
       '#default_value' => $expression,
@@ -163,7 +165,8 @@ class AddColumn extends Form {
           }
           else {
             $this->setError(TRUE);
-            $GLOBALS['redcat_app_errors'][] = 'A string in the submitted expression was joined by something other than "&".';
+            $GLOBALS['redcat_app_errors'][] = 'A string in the submitted expression '
+              . 'was joined by something other than "&".';
             return FALSE;
           }
           $process[] = [
@@ -183,7 +186,8 @@ class AddColumn extends Form {
         }
         else {
           $this->setError(TRUE);
-          $GLOBALS['redcat_app_errors'][] = 'A string in the submitted expression was joined by something other than "&".';
+          $GLOBALS['redcat_app_errors'][] = 'A string in the submitted expression was '
+            . 'joined by something other than "&".';
           return FALSE;
         }
       }
@@ -250,17 +254,30 @@ class AddColumn extends Form {
           elseif ($actions['type'] == 'expression') {
             $expression_process = $actions['expression'];
             // Find * and /.
-            $expression_process = $this->operatorProcessing($expression_process, ['*', '/'], $row, $columns);
+            $expression_process = $this->operatorProcessing(
+              $expression_process,
+              ['*', '/'],
+              $row,
+              $columns
+            );
 
             // Find + and -.
-            $expression_process = $this->operatorProcessing($expression_process, ['+', '-'], $row, $columns);
+            $expression_process = $this->operatorProcessing(
+              $expression_process,
+              ['+', '-'],
+              $row,
+              $columns
+            );
 
             // Find &.
             $c_key = $this->operatorKey($expression_process, ['&']);
             $all_ops = ['*', '/', '+', '-', '&'];
             while ($c_key !== FALSE) {
               $new_expression_process = [];
-              if (isset($expression_process[$c_key - 1]) && isset($expression_process[$c_key + 1])) {
+              if (
+                isset($expression_process[$c_key - 1])
+                && isset($expression_process[$c_key + 1])
+              ) {
                 $val_1 = trim($expression_process[$c_key - 1]);
                 $val_2 = trim($expression_process[$c_key + 1]);
                 $val = '';
@@ -272,7 +289,8 @@ class AddColumn extends Form {
                   $error_string = $expression_process[$c_key - 1];
                   $error_string .= $expression_process[$c_key];
                   $error_string .= $expression_process[$c_key + 1];
-                  $GLOBALS['redcat_app_errors'][] = 'The expression had an error around "' . $error_string . '".';
+                  $GLOBALS['redcat_app_errors'][] = 'The expression had an error around "'
+                    . $error_string . '".';
                   return FALSE;
                 }
                 else {
@@ -293,12 +311,16 @@ class AddColumn extends Form {
                 $new_expression_process[] = $val;
                 if ($c_key < count($expression_process) - 2) {
                   $end_num = count($expression_process) - $c_key - 2;
-                  $new_expression_process = array_merge($new_expression_process, array_slice($expression_process, -1, $end_num));
+                  $new_expression_process = array_merge(
+                    $new_expression_process,
+                    array_slice($expression_process, -1, $end_num)
+                  );
                 }
               }
               else {
                 $this->setError(TRUE);
-                $GLOBALS['redcat_app_errors'][] = 'There was a problem with one of the concat operations (&). Please review your expression.';
+                $GLOBALS['redcat_app_errors'][] = 'There was a problem with one of the concat'
+                  . ' operations (&). Please review your expression.';
                 return FALSE;
               }
 
@@ -312,7 +334,8 @@ class AddColumn extends Form {
             else {
               // Something broke.
               $this->setError(TRUE);
-              $GLOBALS['redcat_app_errors'][] = 'Something went wrong. Please review your expression.';
+              $GLOBALS['redcat_app_errors'][] = 'Something went wrong. '
+                . 'Please review your expression.';
               return FALSE;
             }
           }
@@ -387,7 +410,10 @@ class AddColumn extends Form {
     $all_ops = ['*', '/', '+', '-', '&'];
     while ($m_key !== FALSE) {
       $new_expression_process = [];
-      if (isset($expression_process[$m_key - 1]) && isset($expression_process[$m_key + 1])) {
+      if (
+        isset($expression_process[$m_key - 1])
+        && isset($expression_process[$m_key + 1])
+      ) {
         $val_1 = trim($expression_process[$m_key - 1]);
         $val_2 = trim($expression_process[$m_key + 1]);
         $val = '';
@@ -399,7 +425,8 @@ class AddColumn extends Form {
           $error_string = $expression_process[$m_key - 1];
           $error_string .= $expression_process[$m_key];
           $error_string .= $expression_process[$m_key + 1];
-          $GLOBALS['redcat_app_errors'][] = 'The expression had an error around "' . $error_string . '".';
+          $GLOBALS['redcat_app_errors'][] = 'The expression had an error around "'
+            . $error_string . '".';
           return FALSE;
         }
         else {
@@ -410,7 +437,8 @@ class AddColumn extends Form {
               $error_string = $expression_process[$m_key - 1];
               $error_string .= $expression_process[$m_key];
               $error_string .= $expression_process[$m_key + 1];
-              $GLOBALS['redcat_app_errors'][] = 'The expression had an error around "' . $error_string . '".';
+              $GLOBALS['redcat_app_errors'][] = 'The expression had an error around "'
+                . $error_string . '".';
               return FALSE;
             }
             else {
@@ -424,7 +452,8 @@ class AddColumn extends Form {
               $error_string = $expression_process[$m_key - 1];
               $error_string .= $expression_process[$m_key];
               $error_string .= $expression_process[$m_key + 1];
-              $GLOBALS['redcat_app_errors'][] = 'The expression had an error around "' . $error_string . '".';
+              $GLOBALS['redcat_app_errors'][] = 'The expression had an error around "'
+                . $error_string . '".';
               return FALSE;
             }
             else {
@@ -457,12 +486,16 @@ class AddColumn extends Form {
         $new_expression_process[] = $val;
         if ($m_key < count($expression_process) - 2) {
           $end_num = count($expression_process) - $m_key - 2;
-          $new_expression_process = array_merge($new_expression_process, array_slice($expression_process, -1, $end_num));
+          $new_expression_process = array_merge(
+            $new_expression_process,
+            array_slice($expression_process, -1, $end_num)
+          );
         }
       }
       else {
         $this->setError(TRUE);
-        $GLOBALS['redcat_app_errors'][] = 'There was a problem with one of the operations (* / + -). Please review your expression.';
+        $GLOBALS['redcat_app_errors'][] = 'There was a problem with one of the '
+          . 'operations (* / + -). Please review your expression.';
         return FALSE;
       }
 

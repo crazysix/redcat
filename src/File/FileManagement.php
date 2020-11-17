@@ -65,7 +65,8 @@ class FileManagement {
       fclose($file);
     }
     else {
-      $GLOBALS['redcat_app_errors'][] = 'The application failed to write to ' . BASE_PATH . '/files/' . $csv . '.csv.';
+      $GLOBALS['redcat_app_errors'][] = 'The application failed to write to '
+        . BASE_PATH . '/files/' . $csv . '.csv.';
     }
   }
 

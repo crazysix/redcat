@@ -176,7 +176,8 @@ class PageBuilder {
     $menu = '';
     foreach ($this->menu as $link) {
       if (!empty($link['title']) && !empty($link['link'])) {
-        $menu .= '<li><a href="' . $link['link'] . '">' . $link['title'] . '</a></li>' . PHP_EOL;
+        $menu .= '<li><a href="' . $link['link'] . '">' . $link['title']
+          . '</a></li>' . PHP_EOL;
       }
     }
 

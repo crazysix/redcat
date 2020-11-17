@@ -47,9 +47,11 @@ class Upload extends Form {
     $original = $this->fileManager->originalFileExists();
     $altered = $this->fileManager->alteredFileExists();
     if ($original) {
-      $message = 'Uploading a new data file will delete the <a href="/data/original/view">previous file</a>.';
+      $message = 'Uploading a new data file will delete the '
+        . '<a href="/data/original/view">previous file</a>.';
       if ($altered) {
-        $message = 'Uploading a new data file will delete the <a href="/data/original/view">previous file</a> and the <a href="/data/saved/view">altered file</a>.';
+        $message = 'Uploading a new data file will delete the '
+          . '<a href="/data/original/view">previous file</a> and the <a href="/data/saved/view">altered file</a>.';
       }
       $form['warning'] = [
         '#type' => 'markup',
@@ -63,7 +65,9 @@ class Upload extends Form {
       '#type' => 'checkbox',
       '#title' => 'CSV has column headers',
       '#default_value' => 1,
-      '#description' => 'If unchecked, basic column headers will be added. Column headers should have alphabetical characters. Dashes (-), and underscores (_), and numeric characters are okay.',
+      '#description' => 'If unchecked, basic column headers will be added. '
+        . 'Column headers should have alphabetical characters. Dashes (-), '
+        . 'underscores (_), and numeric characters are okay.',
     ];
 
     $form['data_file'] = [
@@ -113,7 +117,10 @@ class Upload extends Form {
     if (!empty($_FILES["data_file"]["name"])) {
       $ext = pathinfo($_FILES['data_file']['name'], PATHINFO_EXTENSION);
       if ($ext = 'csv') {
-        $saved = move_uploaded_file($_FILES["data_file"]["tmp_name"], BASE_PATH . '/files/original.' . $ext);
+        $saved = move_uploaded_file(
+          $_FILES["data_file"]["tmp_name"],
+          BASE_PATH . '/files/original.' . $ext
+        );
         if ($saved) {
           if ($this->fileManager->alteredFileExists()) {
             $this->fileManager->deleteAlteredFile();
@@ -123,7 +130,8 @@ class Upload extends Form {
           }
         }
         else {
-          $GLOBALS['redcat_app_errors'][] = 'There was an error while saving your file. Please try again.';
+          $GLOBALS['redcat_app_errors'][] = 'There was an error while saving your file. '
+            . 'Please try again.';
           $error = TRUE;
         }
       }
@@ -133,7 +141,8 @@ class Upload extends Form {
       }
     }
     else {
-      $GLOBALS['redcat_app_errors'][] = 'A problem occurred while uploading your file. Please try again.';
+      $GLOBALS['redcat_app_errors'][] = 'A problem occurred while uploading your file. '
+        . 'Please try again.';
       $error = TRUE;
     }
 
