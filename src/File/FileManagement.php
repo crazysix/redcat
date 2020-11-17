@@ -24,7 +24,7 @@ class FileManagement {
    *   True is file exists.
    */
   public function alteredFileExists() {
-  	return file_exists(BASE_PATH . '/files/altered.csv');
+    return file_exists(BASE_PATH . '/files/altered.csv');
   }
 
   /**
@@ -76,7 +76,7 @@ class FileManagement {
     $csv = $this->csvToArray('original');
     $num = count(reset($csv));
     $headers = [];
-    for ($i = 0; $i < $num; $i++) { 
+    for ($i = 0; $i < $num; $i++) {
       $headers[] = 'column_' . ($i + 1);
     }
     array_unshift($csv, $headers);

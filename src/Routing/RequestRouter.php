@@ -8,7 +8,7 @@ use CodeChallenge\Routing\Route;
  * Router Request class.
  */
 class RequestRouter extends Route {
-  
+
   /**
    * Constructs the RequestRouter object.
    */
@@ -53,7 +53,13 @@ class RequestRouter extends Route {
    *   Data view option.
    */
   public function buildDataView($method, $data) {
-    echo 'Dynamic ' . $data . ' file.';
+    $page = new \CodeChallenge\File\DataDisplay($data);
+    if ($method == 'post') {
+      $page->build();
+    }
+    else {
+      $page->build();
+    }
   }
 
 }

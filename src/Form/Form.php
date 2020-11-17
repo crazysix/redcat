@@ -40,7 +40,7 @@ class Form {
     $form_output = '<form method="post" action="' . $_SERVER['REQUEST_URI'] . '" ';
     $form_output .= 'name="' . $form_id . '" id="' . $form_id . '"';
     $form_output .= (!empty($form['#file_upload']) ? ' enctype="multipart/form-data"' : '') . '>';
-    
+
     // Render form elements.
     foreach ($form as $name => $element) {
       if (substr($name, 0, 1) != '#') {
@@ -122,10 +122,23 @@ class Form {
    */
   public function getValues(string $key = '') {
     if (!empty($key)) {
-      return $_POST[$key];
+      return $_POST[$key] ?? NULL;
     }
 
-    return $_POST;
+    return $_POST ?? [];
+  }
+
+  /**
+   * Validate submitted values.
+   *
+   * @param array $values
+   *   Submitted values to be validated.
+   *
+   * @return bool
+   *   Returns TRUE if values are valid.
+   */
+  public function validate(array $values = []) {
+    return TRUE;
   }
 
   /**

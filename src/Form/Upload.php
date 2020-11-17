@@ -63,7 +63,7 @@ class Upload extends Form {
       '#type' => 'checkbox',
       '#title' => 'CSV has column headers',
       '#default_value' => 1,
-      '#description' => 'If unchecked, basic column headers will be added. column header should only have alphabetical characters, dashes (-), and underscores (_).',
+      '#description' => 'If unchecked, basic column headers will be added. Column headers should have alphabetical characters. Dashes (-), and underscores (_), and numeric characters are okay.',
     ];
 
     $form['data_file'] = [
@@ -124,7 +124,7 @@ class Upload extends Form {
         }
         else {
           $GLOBALS['redcat_app_errors'][] = 'There was an error while saving your file. Please try again.';
-        $error = TRUE;
+          $error = TRUE;
         }
       }
       else {
@@ -134,7 +134,7 @@ class Upload extends Form {
     }
     else {
       $GLOBALS['redcat_app_errors'][] = 'A problem occurred while uploading your file. Please try again.';
-        $error = TRUE;
+      $error = TRUE;
     }
 
     if ($error) {

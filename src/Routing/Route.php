@@ -6,7 +6,7 @@ namespace CodeChallenge\Routing;
  * Router class.
  */
 class Route {
-  
+
   /**
    * The routes used in this app.
    *
