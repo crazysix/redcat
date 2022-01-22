@@ -1,5 +1,11 @@
 # Coding Challenge
 
+Run program:
+1. Clone the repo to the local machine.
+2. Go to the cloned directory.
+3. Run `php -S localhost:8000`.
+4. Go to localhost:8000 in a browser.
+
 Instructions:
 1. Start at homepage (/).
 2. Cick the link to upload a file. The sample file (/files/example.csv) can be used to upload and test.
@@ -10,6 +16,8 @@ TODOs:
 1. Add JS validation to forms.
 2. Make it pretty.
 3. Catch more edge cases.
+4. Add unit testing.
+5. Reduce method complexity in some classes.
 
 This is an over-enginieered but fun app to view and manipulate CSV data. Enjoy!
 
